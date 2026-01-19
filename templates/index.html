@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blind OCR - Web Version</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 2rem 0;
+        }
+        .container {
+            max-width: 800px;
+        }
+        .upload-area {
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: #f8f9fa;
+        }
+        .upload-area:hover {
+            background-color: #e9f5ff;
+            border-color: #0056b3;
+        }
+        .preview-container {
+            margin-top: 2rem;
+            display: none;
+        }
+        #previewImage {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        #extractedText {
+            min-height: 100px;
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            white-space: pre-wrap;
+        }
+        .btn-speak {
+            margin-top: 1rem;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Blind OCR - Web Version</h1>
+        
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title">Upload an Image</h5>
+                <div class="upload-area" id="dropZone">
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    <i class="bi bi-cloud-upload" style="font-size: 3rem; color: #007bff;"></i>
+                    <h5>Drag & Drop your image here</h5>
+                    <p class="text-muted">or click to browse files</p>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Processing your image...</p>
+                </div>
+                
+                <div class="preview-container" id="previewContainer">
+                    <h5>Preview</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img id="previewImage" src="#" alt="Preview" class="img-fluid">
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Extracted Text:</h6>
+                            <div id="extractedText"></div>
+                            <button id="speakButton" class="btn btn-primary btn-speak">
+                                <i class="bi bi-volume-up"></i> Read Aloud
+                            </button>
+                            <audio id="audioPlayer" controls class="w-100 mt-2" style="display: none;">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 text-center text-muted">
+            <p>Powered by Tesseract OCR and gTTS</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            const previewContainer = document.getElementById('previewContainer');
+            const previewImage = document.getElementById('previewImage');
+            const extractedText = document.getElementById('extractedText');
+            const speakButton = document.getElementById('speakButton');
+            const audioPlayer = document.getElementById('audioPlayer');
+            const loading = document.getElementById('loading');
+            
+            let audioUrl = '';
+            
+            // Handle click on drop zone
+            dropZone.addEventListener('click', () => fileInput.click());
+            
+            // Handle file selection
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // Handle drag and drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dropZone.style.borderColor = '#0056b3';
+                dropZone.style.backgroundColor = '#e9f5ff';
+            }
+            
+            function unhighlight() {
+                dropZone.style.borderColor = '#007bff';
+                dropZone.style.backgroundColor = '#f8f9fa';
+            }
+            
+            // Handle dropped files
+            dropZone.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+            
+            function handleFileSelect(e) {
+                const files = e.target.files;
+                handleFiles(files);
+            }
+            
+            function handleFiles(files) {
+                if (files.length === 0) return;
+                
+                const file = files[0];
+                if (!file.type.startsWith('image/')) {
+                    alert('Please upload an image file');
+                    return;
+                }
+                
+                // Show loading indicator
+                loading.style.display = 'block';
+                previewContainer.style.display = 'none';
+                
+                // Create FormData and send to server
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    // Update UI with results
+                    previewImage.src = data.image_url;
+                    extractedText.textContent = data.text || 'No text could be extracted.';
+                    
+                    // Set up audio
+                    if (data.audio_url) {
+                        audioUrl = data.audio_url;
+                        audioPlayer.src = audioUrl;
+                        audioPlayer.style.display = 'block';
+                    }
+                    
+                    // Show preview
+                    loading.style.display = 'none';
+                    previewContainer.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error processing image: ' + error.message);
+                    loading.style.display = 'none';
+                });
+                
+                // Show preview of the image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            // Handle speak button click
+            speakButton.addEventListener('click', function() {
+                if (audioUrl) {
+                    audioPlayer.play();
+                } else if (extractedText.textContent.trim()) {
+                    // Fallback to Web Speech API if no audio URL is available
+                    const speech = new SpeechSynthesisUtterance(extractedText.textContent);
+                    window.speechSynthesis.speak(speech);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

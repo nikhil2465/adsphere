@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Virtual Environment
+.venv
+venv/
+.env
+
+# Media and data files
+*.mp3
+*.wav
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.ico
+*.pdf
+
+# IDE specific files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+*.sql
+
+# Local development
+.env
+.env.local
+.env.*.local
+
+# Build files
+build/
+dist/
+*.egg-info/
+*.egg
+
+# System Files
+.DS_Store
+Thumbs.db
