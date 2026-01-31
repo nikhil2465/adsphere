@@ -1,0 +1,47 @@
+{
+  "name": "adsphere",
+  "version": "1.0.0",
+  "description": "Universal Advertising Management Platform - Enterprise solution for marketplace ad management",
+  "main": "index.js",
+  "scripts": {
+    "install:all": "npm install && npm run install:backend && npm run install:frontend && npm run install:mobile",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "install:mobile": "cd mobile && npm install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm start",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "mobile:android": "cd mobile && npm run android",
+    "mobile:build-apk": "cd mobile && npm run build:android",
+    "docker:build": "docker-compose -f docker/docker-compose.yml build",
+    "docker:up": "docker-compose -f docker/docker-compose.yml up -d",
+    "docker:down": "docker-compose -f docker/docker-compose.yml down",
+    "setup": "node scripts/setup.js",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test"
+  },
+  "keywords": [
+    "advertising",
+    "amazon-ads",
+    "walmart-ads",
+    "marketplace",
+    "ads-management",
+    "enterprise",
+    "microservices",
+    "react-native"
+  ],
+  "author": "AdSphere Enterprise Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
