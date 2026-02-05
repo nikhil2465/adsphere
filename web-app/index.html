@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdSphere - Campaign Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f2f2f7;
+            color: #333;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.0.1);
+            overflow: hidden;
+        }
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: white;
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .tab:hover {
+            background: #f8f9fa;
+        }
+        .tab.active {
+            background: #007aff;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.0.1);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .download-btn {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+        .download-btn:hover {
+            background: #0056b3;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .campaign-list {
+            display: grid;
+            gap: 15px;
+        }
+        .campaign-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.0.1);
+            border-left: 4px solid #007aff;
+        }
+        .campaign-card.amazon {
+            border-left-color: #ff9500;
+        }
+        .campaign-card.walmart {
+            border-left-color: #0071ce;
+        }
+        .campaign-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .campaign-name {
+            font-size: 16px;
+            font-weight: bold;
+            flex: 1;
+        }
+        .campaign-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+        .status-enabled {
+            background: #34c759;
+        }
+        .status-paused {
+            background: #ff9500;
+        }
+        .campaign-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .metric {
+            font-size: 14px;
+            color: #666;
+        }
+        .platform-header {
+            background: #ff9500;
+            color: white;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+        }
+        .platform-header.walmart {
+            background: #0071ce;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 AdSphere Campaign Management</h1>
+        <p>Amazon & Walmart Advertising Data Dashboard</p>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('home')">🏠 Home</button>
+            <button class="tab" onclick="showTab('campaigns')">📊 All Campaigns</button>
+            <button class="tab" onclick="showTab('amazon')">🛒 Amazon</button>
+            <button class="tab" onclick="showTab('walmart')">🏪 Walmart</button>
+        </div>
+
+        <!-- Home Tab -->
+        <div id="home" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📊 Summary</h2>
+                    <button class="download-btn" onclick="downloadAllData()">📥 Download All</button>
+                </div>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-campaigns">0</div>
+                        <div class="stat-label">Total Campaigns</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-impressions">0</div>
+                        <div class="stat-label">Total Impressions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-spend">$0</div>
+                        <div class="stat-label">Total Spend</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-roas">0</div>
+                        <div class="stat-label">Average ROAS</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- All Campaigns Tab -->
+        <div id="campaigns" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📊 All Campaigns</h2>
+                    <button class="download-btn" onclick="downloadCampaigns('all')">📥 Download</button>
+                </div>
+                <div class="campaign-list" id="all-campaigns-list"></div>
+            </div>
+        </div>
+
+        <!-- Amazon Tab -->
+        <div id="amazon" class="tab-content">
+            <div class="platform-header">
+                <h2>🛒 Amazon Campaigns</h2>
+                <button class="download-btn" onclick="downloadCampaigns('amazon')">📥 Download Amazon</button>
+            </div>
+            <div class="campaign-list" id="amazon-campaigns-list"></div>
+        </div>
+
+        <!-- Walmart Tab -->
+        <div id="walmart" class="tab-content">
+            <div class="platform-header walmart">
+                <h2>🏪 Walmart Campaigns</h2>
+                <button class="download-btn" onclick="downloadCampaigns('walmart')">📥 Download Walmart</button>
+            </div>
+            <div class="campaign-list" id="walmart-campaigns-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // Mock Data
+        const mockData = {
+            amazon: [
+                {
+                    campaignId: "AMZ001",
+                    name: "Summer Sale 2024",
+                    type: "Sponsored Products",
+                    status: "ENABLED",
+                    dailyBudget: 50,
+                    startDate: "2024-06-01",
+                    endDate: "2024-08-31",
+                    metrics: {
+                        impressions: 125000,
+                        clicks: 2500,
+                        spend: 1250.50,
+                        roas: 4.2
+                    }
+                },
+                {
+                    campaignId: "AMZ002", 
+                    name: "Prime Day Special",
+                    type: "Sponsored Brands",
+                    status: "PAUSED",
+                    dailyBudget: 100,
+                    startDate: "2024-07-15",
+                    endDate: "2024-07-17",
+                    metrics: {
+                        impressions: 89000,
+                        clicks: 1780,
+                        spend: 890.25,
+                        roas: 3.8
+                    }
+                }
+            ],
+            walmart: [
+                {
+                    campaignId: "WMT001",
+                    name: "Back to School 2024",
+                    type: "Sponsored Products",
+                    status: "ACTIVE",
+                    dailyBudget: 75,
+                    startDate: "2024-07-01",
+                    endDate: "2024-09-30",
+                    metrics: {
+                        impressions: 98000,
+                        clicks: 1960,
+                        spend: 1470.75,
+                        roas: 3.5
+                    }
+                },
+                {
+                    campaignId: "WMT002",
+                    name: "Holiday Essentials",
+                    type: "Sponsored Brands", 
+                    status: "ACTIVE",
+                    dailyBudget: 120,
+                    startDate: "2024-11-01",
+                    endDate: "2024-12-31",
+                    metrics: {
+                        impressions: 156000,
+                        clicks: 3120,
+                        spend: 2340.80,
+                        roas: 4.1
+                    }
+                }
+            ]
+        };
+
+        // Initialize app
+        function initApp() {
+            updateHomeStats();
+            renderCampaigns('all', [...mockData.amazon, ...mockData.walmart]);
+            renderCampaigns('amazon', mockData.amazon);
+            renderCampaigns('walmart', mockData.walmart);
+        }
+
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Update home statistics
+        function updateHomeStats() {
+            const allCampaigns = [...mockData.amazon, ...mockData.walmart];
+            const totalCampaigns = allCampaigns.length;
+            const totalImpressions = allCampaigns.reduce((sum, c) => sum + c.metrics.impressions, 0);
+            const totalSpend = allCampaigns.reduce((sum, c) => sum + c.metrics.spend, 0);
+            const avgRoas = (allCampaigns.reduce((sum, c) => sum + c.metrics.roas, 0) / totalCampaigns).toFixed(1);
+
+            document.getElementById('total-campaigns').textContent = totalCampaigns;
+            document.getElementById('total-impressions').textContent = totalImpressions.toLocaleString();
+            document.getElementById('total-spend').textContent = `$${totalSpend.toFixed(2)}`;
+            document.getElementById('total-roas').textContent = avgRoas;
+        }
+
+        // Render campaigns
+        function renderCampaigns(platform, campaigns) {
+            const container = document.getElementById(`${platform}-campaigns-list`);
+            container.innerHTML = '';
+
+            campaigns.forEach(campaign => {
+                const card = document.createElement('div');
+                card.className = `campaign-card ${platform}`;
+                card.innerHTML = `
+                    <div class="campaign-header">
+                        <div class="campaign-name">${campaign.name}</div>
+                        <div class="campaign-status ${campaign.status === 'ENABLED' || campaign.status === 'ACTIVE' ? 'status-enabled' : 'status-paused'}">
+                            ${campaign.status}
+                        </div>
+                    </div>
+                    <div style="font-size: 14px; color: #666; margin-bottom: 8px;">
+                        <strong>Type:</strong> ${campaign.type}<br>
+                        <strong>Budget:</strong> $${campaign.dailyBudget}/day<br>
+                        <strong>Period:</strong> ${campaign.startDate} - ${campaign.endDate}
+                    </div>
+                    <div class="campaign-metrics">
+                        <div class="metric">📊 ${campaign.metrics.impressions.toLocaleString()} impressions</div>
+                        <div class="metric">👆 ${campaign.metrics.clicks} clicks</div>
+                        <div class="metric">💰 $${campaign.metrics.spend.toFixed(2)} spend</div>
+                        <div class="metric">📈 ROAS: ${campaign.metrics.roas}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Download functions
+        function downloadCampaigns(platform) {
+            const campaigns = platform === 'all' ? [...mockData.amazon, ...mockData.walmart] : 
+                           platform === 'amazon' ? mockData.amazon : mockData.walmart;
+            
+            const csv = convertToCSV(campaigns, platform);
+            downloadCSV(csv, `${platform}-campaigns-${new Date().toISOString().slice(0,10)}.csv`);
+        }
+
+        function downloadAllData() {
+            const allCampaigns = [...mockData.amazon, ...mockData.walmart];
+            const csv = convertToCSV(allCampaigns, 'complete');
+            downloadCSV(csv, `adsphere-complete-data-${new Date().toISOString().slice(0,10)}.csv`);
+        }
+
+        function convertToCSV(campaigns, source) {
+            const headers = ['Campaign ID', 'Campaign Name', 'Platform', 'Type', 'Status', 'Daily Budget', 'Impressions', 'Clicks', 'Spend', 'ROAS', 'Start Date', 'End Date', 'Data Source'];
+            
+            const rows = campaigns.map(c => [
+                c.campaignId,
+                `"${c.name}"`,
+                source === 'amazon' || (source === 'complete' && mockData.amazon.includes(c)) ? 'Amazon' : 'Walmart',
+                c.type,
+                c.status,
+                c.dailyBudget,
+                c.metrics.impressions,
+                c.metrics.clicks,
+                c.metrics.spend.toFixed(2),
+                c.metrics.roas,
+                c.startDate,
+                c.endDate,
+                source === 'complete' ? (mockData.amazon.includes(c) ? 'Amazon Data' : 'Walmart Data') : 'Platform Data'
+            ]);
+
+            return [headers, ...rows].map(row => row.join(',')).join('\n');
+        }
+
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

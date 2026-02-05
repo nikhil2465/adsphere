@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { apiService, Campaign } from '../services/api';
+import { exportToCSV } from '../utils/csvExport';
 
 const CampaignsScreen = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -28,6 +29,15 @@ const CampaignsScreen = () => {
     loadCampaigns();
   };
 
+  const handleDownload = () => {
+    try {
+      exportToCSV(campaigns, 'all-campaigns');
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Failed to download data. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -44,8 +54,15 @@ const CampaignsScreen = () => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      <Text style={styles.title}>All Campaigns</Text>
-      <Text style={styles.subtitle}>{campaigns.length} campaigns found</Text>
+      <View style={styles.headerContainer}>
+        <View>
+          <Text style={styles.title}>All Campaigns</Text>
+          <Text style={styles.subtitle}>{campaigns.length} campaigns found</Text>
+        </View>
+        <TouchableOpacity style={styles.downloadButton} onPress={handleDownload}>
+          <Text style={styles.downloadButtonText}>📥 Download</Text>
+        </TouchableOpacity>
+      </View>
       
       {campaigns.map((campaign) => (
         <View key={campaign.campaignId} style={styles.card}>
@@ -87,8 +104,25 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F2F2F7' },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { marginTop: 16, fontSize: 16, color: '#8E8E93' },
-  title: { fontSize: 24, fontWeight: 'bold', margin: 16, color: '#000' },
-  subtitle: { fontSize: 14, color: '#8E8E93', marginLeft: 16, marginBottom: 8 },
+  headerContainer: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    paddingHorizontal: 16, 
+    paddingTop: 16,
+    paddingBottom: 8 
+  },
+  title: { fontSize: 24, fontWeight: 'bold', color: '#000' },
+  subtitle: { fontSize: 14, color: '#8E8E93', marginBottom: 8 },
+  downloadButton: { 
+    backgroundColor: '#007AFF', 
+    paddingHorizontal: 12, 
+    paddingVertical: 6, 
+    borderRadius: 6,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  downloadButtonText: { color: '#FFFFFF', fontSize: 12, fontWeight: '600' },
   card: { backgroundColor: '#FFFFFF', margin: 16, padding: 16, borderRadius: 12 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   campaignName: { fontSize: 16, fontWeight: 'bold', flex: 1 },

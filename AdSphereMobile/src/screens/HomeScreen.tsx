@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator, TouchableOpacity, Platform } from 'react-native';
 import { apiService, Campaign, HealthResponse } from '../services/api';
+import { exportAllDataToCSV } from '../utils/csvExport';
 
 const HomeScreen = () => {
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [amazonCampaigns, setAmazonCampaigns] = useState<Campaign[]>([]);
+  const [walmartCampaigns, setWalmartCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const loadData = async () => {
     try {
-      const [healthData, campaignsData] = await Promise.all([
+      const [healthData, campaignsData, amazonData, walmartData] = await Promise.all([
         apiService.getHealth(),
         apiService.getAllCampaigns(),
+        apiService.getAmazonCampaigns(),
+        apiService.getWalmartCampaigns(),
       ]);
       setHealth(healthData);
       setCampaigns(campaignsData.data);
+      setAmazonCampaigns(amazonData.data);
+      setWalmartCampaigns(walmartData.data);
     } catch (error) {
       console.error('Failed to load data:', error);
     } finally {
@@ -31,6 +38,15 @@ const HomeScreen = () => {
   const onRefresh = () => {
     setRefreshing(true);
     loadData();
+  };
+
+  const handleDownloadAllData = async () => {
+    try {
+      await exportAllDataToCSV(campaigns, amazonCampaigns, walmartCampaigns);
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Failed to download data. Please try again.');
+    }
   };
 
   if (loading) {
@@ -65,7 +81,15 @@ const HomeScreen = () => {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>📊 Summary</Text>
+        <View style={styles.cardHeader}>
+          <Text style={styles.cardTitle}>📊 Summary</Text>
+          <TouchableOpacity 
+            style={styles.downloadButton} 
+            onPress={handleDownloadAllData}
+          >
+            <Text style={styles.downloadButtonText}>📥 Download</Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.statText}>Campaigns: {campaigns.length}</Text>
         <Text style={styles.statText}>
           Total Impressions: {campaigns.reduce((sum, c) => sum + c.metrics.impressions, 0).toLocaleString()}
@@ -83,7 +107,17 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { marginTop: 16, fontSize: 16, color: '#8E8E93' },
   card: { backgroundColor: '#FFFFFF', margin: 16, padding: 16, borderRadius: 12 },
-  cardTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 12 },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  cardTitle: { fontSize: 18, fontWeight: 'bold' },
+  downloadButton: { 
+    backgroundColor: '#007AFF', 
+    paddingHorizontal: 12, 
+    paddingVertical: 6, 
+    borderRadius: 6,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  downloadButtonText: { color: '#FFFFFF', fontSize: 12, fontWeight: '600' },
   message: { fontSize: 14, color: '#007AFF', marginBottom: 8 },
   statusText: { fontSize: 14, color: '#333', marginBottom: 4 },
   statText: { fontSize: 14, color: '#333', marginBottom: 4 },

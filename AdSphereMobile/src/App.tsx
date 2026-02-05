@@ -5,7 +5,7 @@ import {
   View, 
   Text, 
   StyleSheet, 
-  ScrollView, 
+  ScrollView,  
   SafeAreaView, 
   StatusBar,
   RefreshControl,

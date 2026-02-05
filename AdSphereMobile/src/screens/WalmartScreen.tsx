@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { apiService, Campaign } from '../services/api';
+import { exportToCSV } from '../utils/csvExport';
 
 const WalmartScreen = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -28,6 +29,15 @@ const WalmartScreen = () => {
     loadWalmartCampaigns();
   };
 
+  const handleDownload = () => {
+    try {
+      exportToCSV(campaigns, 'walmart-campaigns');
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Failed to download data. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -45,8 +55,13 @@ const WalmartScreen = () => {
       }
     >
       <View style={styles.header}>
-        <Text style={styles.title}>🏪 Walmart Campaigns</Text>
-        <Text style={styles.count}>{campaigns.length} campaigns</Text>
+        <View>
+          <Text style={styles.title}>🏪 Walmart Campaigns</Text>
+          <Text style={styles.count}>{campaigns.length} campaigns</Text>
+        </View>
+        <TouchableOpacity style={styles.downloadButton} onPress={handleDownload}>
+          <Text style={styles.downloadButtonText}>📥 Download</Text>
+        </TouchableOpacity>
       </View>
       
       {campaigns.map((campaign) => (
@@ -110,6 +125,15 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 24, fontWeight: 'bold', color: '#FFF' },
   count: { fontSize: 16, color: '#FFF', opacity: 0.9 },
+  downloadButton: { 
+    backgroundColor: '#FFFFFF', 
+    paddingHorizontal: 12, 
+    paddingVertical: 6, 
+    borderRadius: 6,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  downloadButtonText: { color: '#0071CE', fontSize: 12, fontWeight: '600' },
   card: { 
     backgroundColor: '#FFFFFF', 
     margin: 16, 
