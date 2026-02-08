@@ -1,0 +1,31 @@
+Multi-Language OCR Test Content
+================================
+
+English: Hello World! This is a test document for OCR.
+
+Chinese (简体): 你好世界！这是一个OCR测试文档。
+
+Hindi (हिन्दी): नमस्ते दुनिया! यह एक OCR परीक्षण दस्तावेज़ है।
+
+Arabic (العربية): مرحبا بالعالم! هذا هو مستند اختبار OCR.
+
+French: Bonjour le monde! Ceci est un document de test OCR.
+
+Spanish: ¡Hola mundo! Este es un documento de prueba OCR.
+
+German: Hallo Welt! Dies ist ein OCR-Testdokument.
+
+Japanese (日本語): こんにちは世界！これはOCRテスト文書です。
+
+Korean (한국어): 안녕하세요 세계! 이것은 OCR 테스트 문서입니다.
+
+Russian (Русский): Привет мир! Это тестовый документ OCR.
+
+Testing Instructions:
+1. Select the appropriate language from the dropdown menu
+2. Upload the image or PDF file to test OCR accuracy
+3. Try different languages to compare extraction results
+4. Test the text-to-speech functionality
+5. Compare results between auto-detect and specific languages
+
+Note: For best results, select the specific language of the text you want to extract.

@@ -17,6 +17,43 @@ import tempfile
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Language mapping for gTTS
+LANGUAGE_MAPPING = {
+    'eng': 'en',
+    'chi_sim': 'zh',
+    'chi_tra': 'zh-TW',
+    'jpn': 'ja',
+    'kor': 'ko',
+    'ara': 'ar',
+    'rus': 'ru',
+    'fra': 'fr',
+    'deu': 'de',
+    'spa': 'es',
+    'ita': 'it',
+    'por': 'pt',
+    'hin': 'hi',
+    'ben': 'bn',
+    'tam': 'ta',
+    'tel': 'te',
+    'mar': 'mr',
+    'guj': 'gu',
+    'kan': 'kn',
+    'mal': 'ml',
+    'pan': 'pa',
+    'urd': 'ur',
+    'tha': 'th',
+    'vie': 'vi',
+    'tur': 'tr',
+    'pol': 'pl',
+    'nld': 'nl',
+    'swe': 'sv',
+    'nor': 'no',
+    'dan': 'da',
+    'fin': 'fi',
+    'ell': 'el',
+    'heb': 'he'
+}
+
 # Set Tesseract path for Windows
 # First try to find tesseract in the system PATH
 try:
@@ -62,7 +99,7 @@ def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'tiff', 'tif', 'webp'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def process_file(file_path, file_extension):
+def process_file(file_path, file_extension, language='eng'):
     try:
         text = ""
         
@@ -109,8 +146,11 @@ def process_file(file_path, file_extension):
                             # Apply thresholding
                             _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
                             
-                            # Extract text
-                            page_text = pytesseract.image_to_string(binary)
+                            # Extract text with language support
+                            if language == 'auto':
+                                page_text = pytesseract.image_to_string(binary)
+                            else:
+                                page_text = pytesseract.image_to_string(binary, lang=language)
                             text += f"Page {i+1}:\n{page_text}\n\n"
                         
                         # Remove temporary image file
@@ -132,8 +172,11 @@ def process_file(file_path, file_extension):
                     # Apply thresholding
                     _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
                     
-                    # Extract text
-                    text = pytesseract.image_to_string(binary)
+                    # Extract text with language support
+                    if language == 'auto':
+                        text = pytesseract.image_to_string(binary)
+                    else:
+                        text = pytesseract.image_to_string(binary, lang=language)
                 else:
                     return "Error: Could not read the image file"
             except Exception as e:
@@ -148,7 +191,7 @@ def process_file(file_path, file_extension):
         logger.error(f"Error processing file: {str(e)}")
         return f"Error processing file: {str(e)}"
 
-def text_to_speech(text):
+def text_to_speech(text, detected_language='eng'):
     try:
         if not text:
             return None, "No text to convert to speech"
@@ -164,8 +207,12 @@ def text_to_speech(text):
         # Debug: Print the audio path
         logger.info(f"Saving audio to: {os.path.abspath(audio_path)}")
         
+        # Map OCR language to gTTS language
+        gtts_lang = LANGUAGE_MAPPING.get(detected_language, 'en')
+        logger.info(f"Using gTTS language: {gtts_lang} for OCR language: {detected_language}")
+        
         # Convert text to speech
-        tts = gTTS(text=text, lang='en')
+        tts = gTTS(text=text, lang=gtts_lang)
         tts.save(audio_path)
         
         # Verify the file was created
@@ -192,11 +239,12 @@ def generate_speech():
     try:
         data = request.get_json()
         text = data.get('text', '')
+        language = data.get('language', 'eng')
         
         if not text:
             return jsonify({'error': 'No text provided'}), 400
             
-        audio_url, error = text_to_speech(text)
+        audio_url, error = text_to_speech(text, language)
         if error:
             return jsonify({'error': error}), 500
             
@@ -233,11 +281,12 @@ def upload_file():
                 file.save(filepath)
                 
                 # Process the file
-                text = process_file(filepath, file_extension)
+                language = request.form.get('language', 'eng')
+                text = process_file(filepath, file_extension, language)
                 
                 # Generate audio if there's text
                 if text and not text.startswith("Error"):
-                    audio_url, error = text_to_speech(text)
+                    audio_url, error = text_to_speech(text, language)
                     if error:
                         logger.error(f"Error generating audio: {str(error)}")
                         audio_url = None
