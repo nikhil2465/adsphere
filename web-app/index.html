@@ -180,6 +180,43 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* Sub-Tab Styles */
+        .sub-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 4px;
+            gap: 4px;
+        }
+        .sub-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .sub-tab:hover {
+            background: #e9ecef;
+        }
+        .sub-tab.active {
+            background: white;
+            color: #007aff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .sub-tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .sub-tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -191,7 +228,6 @@
     <div class="container">
         <div class="tabs">
             <button class="tab active" onclick="showTab('home')">🏠 Home</button>
-            <button class="tab" onclick="showTab('campaigns')">📊 All Campaigns</button>
             <button class="tab" onclick="showTab('amazon')">🛒 Amazon</button>
             <button class="tab" onclick="showTab('walmart')">🏪 Walmart</button>
         </div>
@@ -222,35 +258,145 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- All Campaigns Tab -->
-        <div id="campaigns" class="tab-content">
+            
+            <!-- Performance Chart -->
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">📊 All Campaigns</h2>
-                    <button class="download-btn" onclick="downloadCampaigns('all')">📥 Download</button>
+                    <h2 class="card-title">📈 Performance Overview</h2>
                 </div>
-                <div class="campaign-list" id="all-campaigns-list"></div>
+                <canvas id="performanceChart" width="400" height="200"></canvas>
             </div>
+            
+            <!-- Platform Distribution Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🎯 Platform Distribution</h2>
+                </div>
+                <canvas id="platformChart" width="400" height="200"></canvas>
+            </div>
+        </div>
         </div>
 
         <!-- Amazon Tab -->
         <div id="amazon" class="tab-content">
             <div class="platform-header">
-                <h2>🛒 Amazon Campaigns</h2>
-                <button class="download-btn" onclick="downloadCampaigns('amazon')">📥 Download Amazon</button>
+                <h2>🛒 Amazon Advertising</h2>
             </div>
-            <div class="campaign-list" id="amazon-campaigns-list"></div>
+            
+            <!-- Amazon Sub-Navigation -->
+            <div class="card">
+                <div class="sub-tabs">
+                    <button class="sub-tab active" onclick="showAmazonSubTab('campaigns')">📊 Campaigns</button>
+                    <button class="sub-tab" onclick="showAmazonSubTab('adgroups')">� Ad Groups</button>
+                    <button class="sub-tab" onclick="showAmazonSubTab('productads')">📦 Product Ads</button>
+                    <button class="sub-tab" onclick="showAmazonSubTab('keywords')">🎯 Keyword Targeting</button>
+                </div>
+            </div>
+            
+            <!-- Amazon Campaigns Sub-Tab -->
+            <div id="amazon-campaigns" class="sub-tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">� Amazon Campaigns</h2>
+                        <button class="download-btn" onclick="downloadCampaigns('amazon')">📥 Download Amazon</button>
+                    </div>
+                    <div class="campaign-list" id="amazon-campaigns-list"></div>
+                </div>
+            </div>
+            
+            <!-- Amazon Ad Groups Sub-Tab -->
+            <div id="amazon-adgroups" class="sub-tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">👥 Amazon Ad Groups</h2>
+                        <button class="download-btn" onclick="downloadAdGroups('amazon')">📥 Download Ad Groups</button>
+                    </div>
+                    <div class="campaign-list" id="amazon-adgroups-list"></div>
+                </div>
+            </div>
+            
+            <!-- Amazon Product Ads Sub-Tab -->
+            <div id="amazon-productads" class="sub-tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📦 Amazon Product Ads</h2>
+                        <button class="download-btn" onclick="downloadProductAds('amazon')">📥 Download Product Ads</button>
+                    </div>
+                    <div class="campaign-list" id="amazon-productads-list"></div>
+                </div>
+            </div>
+            
+            <!-- Amazon Keywords Sub-Tab -->
+            <div id="amazon-keywords" class="sub-tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🎯 Amazon Keyword Targeting</h2>
+                        <button class="download-btn" onclick="downloadKeywords('amazon')">📥 Download Keywords</button>
+                    </div>
+                    <div class="campaign-list" id="amazon-keywords-list"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Walmart Tab -->
         <div id="walmart" class="tab-content">
             <div class="platform-header walmart">
-                <h2>🏪 Walmart Campaigns</h2>
-                <button class="download-btn" onclick="downloadCampaigns('walmart')">📥 Download Walmart</button>
+                <h2>🏪 Walmart Advertising</h2>
             </div>
-            <div class="campaign-list" id="walmart-campaigns-list"></div>
+            
+            <!-- Walmart Sub-Navigation -->
+            <div class="card">
+                <div class="sub-tabs">
+                    <button class="sub-tab active" onclick="showWalmartSubTab('campaigns')">📊 Campaigns</button>
+                    <button class="sub-tab" onclick="showWalmartSubTab('adgroups')">👥 Ad Groups</button>
+                    <button class="sub-tab" onclick="showWalmartSubTab('productads')">� Product Ads</button>
+                    <button class="sub-tab" onclick="showWalmartSubTab('keywords')">🎯 Keyword Targeting</button>
+                </div>
+            </div>
+            
+            <!-- Walmart Campaigns Sub-Tab -->
+            <div id="walmart-campaigns" class="sub-tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📊 Walmart Campaigns</h2>
+                        <button class="download-btn" onclick="downloadCampaigns('walmart')">📥 Download Walmart</button>
+                    </div>
+                    <div class="campaign-list" id="walmart-campaigns-list"></div>
+                </div>
+            </div>
+            
+            <!-- Walmart Ad Groups Sub-Tab -->
+            <div id="walmart-adgroups" class="sub-tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">👥 Walmart Ad Groups</h2>
+                        <button class="download-btn" onclick="downloadAdGroups('walmart')">📥 Download Ad Groups</button>
+                    </div>
+                    <div class="campaign-list" id="walmart-adgroups-list"></div>
+                </div>
+            </div>
+            
+            <!-- Walmart Product Ads Sub-Tab -->
+            <div id="walmart-productads" class="sub-tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📦 Walmart Product Ads</h2>
+                        <button class="download-btn" onclick="downloadProductAds('walmart')">📥 Download Product Ads</button>
+                    </div>
+                    <div class="campaign-list" id="walmart-productads-list"></div>
+                </div>
+            </div>
+            
+            <!-- Walmart Keywords Sub-Tab -->
+            <div id="walmart-keywords" class="sub-tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🎯 Walmart Keyword Targeting</h2>
+                        <button class="download-btn" onclick="downloadKeywords('walmart')">📥 Download Keywords</button>
+                    </div>
+                    <div class="campaign-list" id="walmart-keywords-list"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -320,15 +466,193 @@
                         roas: 4.1
                     }
                 }
+            ],
+            adGroups: [
+                {
+                    adGroupId: "AG001",
+                    name: "Electronics Category",
+                    campaign: "Summer Sale 2024",
+                    platform: "Amazon",
+                    status: "ENABLED",
+                    dailyBudget: 25,
+                    ads: 12,
+                    keywords: 45,
+                    performance: {
+                        impressions: 62000,
+                        clicks: 1240,
+                        spend: 625.25,
+                        roas: 4.8
+                    }
+                },
+                {
+                    adGroupId: "AG002",
+                    name: "Home & Kitchen",
+                    campaign: "Prime Day Special",
+                    platform: "Amazon",
+                    status: "PAUSED",
+                    dailyBudget: 50,
+                    ads: 8,
+                    keywords: 32,
+                    performance: {
+                        impressions: 44500,
+                        clicks: 890,
+                        spend: 445.12,
+                        roas: 3.6
+                    }
+                },
+                {
+                    adGroupId: "AG003",
+                    name: "School Supplies",
+                    campaign: "Back to School 2024",
+                    platform: "Walmart",
+                    status: "ENABLED",
+                    dailyBudget: 35,
+                    ads: 15,
+                    keywords: 28,
+                    performance: {
+                        impressions: 49000,
+                        clicks: 980,
+                        spend: 735.37,
+                        roas: 3.7
+                    }
+                }
+            ],
+            productAds: [
+                {
+                    adId: "PA001",
+                    name: "Wireless Headphones Pro",
+                    campaign: "Summer Sale 2024",
+                    platform: "Amazon",
+                    type: "Sponsored Product",
+                    status: "ENABLED",
+                    sku: "WH-P100-BLK",
+                    price: 89.99,
+                    performance: {
+                        impressions: 31000,
+                        clicks: 620,
+                        spend: 312.50,
+                        roas: 5.2,
+                        conversions: 18,
+                        revenue: 1625.82
+                    }
+                },
+                {
+                    adId: "PA002",
+                    name: "Smart Watch Series 5",
+                    campaign: "Prime Day Special",
+                    platform: "Amazon",
+                    type: "Sponsored Product",
+                    status: "PAUSED",
+                    sku: "SW-S5-SLV",
+                    price: 299.99,
+                    performance: {
+                        impressions: 22000,
+                        clicks: 440,
+                        spend: 220.00,
+                        roas: 4.0,
+                        conversions: 8,
+                        revenue: 879.96
+                    }
+                },
+                {
+                    adId: "PA003",
+                    name: "Laptop Backpack Premium",
+                    campaign: "Back to School 2024",
+                    platform: "Walmart",
+                    type: "Sponsored Product",
+                    status: "ENABLED",
+                    sku: "LB-PREM-BLK",
+                    price: 45.99,
+                    performance: {
+                        impressions: 28000,
+                        clicks: 560,
+                        spend: 420.00,
+                        roas: 3.8,
+                        conversions: 14,
+                        revenue: 643.86
+                    }
+                }
+            ],
+            keywords: [
+                {
+                    keywordId: "KW001",
+                    keyword: "wireless headphones",
+                    campaign: "Summer Sale 2024",
+                    platform: "Amazon",
+                    matchType: "Broad",
+                    bid: 1.25,
+                    status: "ENABLED",
+                    performance: {
+                        impressions: 15500,
+                        clicks: 310,
+                        spend: 387.50,
+                        roas: 4.1,
+                        conversions: 9
+                    }
+                },
+                {
+                    keywordId: "KW002",
+                    keyword: "bluetooth speaker",
+                    campaign: "Summer Sale 2024",
+                    platform: "Amazon",
+                    matchType: "Phrase",
+                    bid: 0.85,
+                    status: "ENABLED",
+                    performance: {
+                        impressions: 12000,
+                        clicks: 240,
+                        spend: 204.00,
+                        roas: 3.9,
+                        conversions: 7
+                    }
+                },
+                {
+                    keywordId: "KW003",
+                    keyword: "school supplies",
+                    campaign: "Back to School 2024",
+                    platform: "Walmart",
+                    matchType: "Exact",
+                    bid: 0.95,
+                    status: "ENABLED",
+                    performance: {
+                        impressions: 18500,
+                        clicks: 370,
+                        spend: 175.75,
+                        roas: 4.2,
+                        conversions: 11
+                    }
+                },
+                {
+                    keywordId: "KW004",
+                    keyword: "laptop accessories",
+                    campaign: "Back to School 2024",
+                    platform: "Walmart",
+                    matchType: "Broad",
+                    bid: 1.10,
+                    status: "PAUSED",
+                    performance: {
+                        impressions: 8900,
+                        clicks: 178,
+                        spend: 97.90,
+                        roas: 3.6,
+                        conversions: 4
+                    }
+                }
             ]
         };
 
         // Initialize app
         function initApp() {
             updateHomeStats();
-            renderCampaigns('all', [...mockData.amazon, ...mockData.walmart]);
             renderCampaigns('amazon', mockData.amazon);
             renderCampaigns('walmart', mockData.walmart);
+            renderAdGroups('amazon');
+            renderProductAds('amazon');
+            renderKeywords('amazon');
+            renderAdGroups('walmart');
+            renderProductAds('walmart');
+            renderKeywords('walmart');
+            renderCharts();
         }
 
         // Tab switching
@@ -344,6 +668,78 @@
             // Show selected tab
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
+        }
+
+        // Amazon sub-tab switching
+        function showAmazonSubTab(subTabName) {
+            // Hide all Amazon sub-tabs
+            document.querySelectorAll('#amazon .sub-tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('#amazon .sub-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected sub-tab
+            document.getElementById(`amazon-${subTabName}`).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load data for the specific sub-tab
+            loadAmazonSubTabData(subTabName);
+        }
+
+        // Walmart sub-tab switching
+        function showWalmartSubTab(subTabName) {
+            // Hide all Walmart sub-tabs
+            document.querySelectorAll('#walmart .sub-tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('#walmart .sub-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected sub-tab
+            document.getElementById(`walmart-${subTabName}`).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load data for the specific sub-tab
+            loadWalmartSubTabData(subTabName);
+        }
+
+        // Load Amazon sub-tab data
+        function loadAmazonSubTabData(subTabName) {
+            switch(subTabName) {
+                case 'campaigns':
+                    renderCampaigns('amazon', mockData.amazon);
+                    break;
+                case 'adgroups':
+                    renderAdGroups('amazon');
+                    break;
+                case 'productads':
+                    renderProductAds('amazon');
+                    break;
+                case 'keywords':
+                    renderKeywords('amazon');
+                    break;
+            }
+        }
+
+        // Load Walmart sub-tab data
+        function loadWalmartSubTabData(subTabName) {
+            switch(subTabName) {
+                case 'campaigns':
+                    renderCampaigns('walmart', mockData.walmart);
+                    break;
+                case 'adgroups':
+                    renderAdGroups('walmart');
+                    break;
+                case 'productads':
+                    renderProductAds('walmart');
+                    break;
+                case 'keywords':
+                    renderKeywords('walmart');
+                    break;
+            }
         }
 
         // Update home statistics
@@ -391,6 +787,122 @@
             });
         }
 
+        // Render Ad Groups
+        function renderAdGroups(platform = null) {
+            const containerId = platform ? `${platform}-adgroups-list` : 'adgroups-list';
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            const filteredAdGroups = platform ? 
+                mockData.adGroups.filter(adGroup => adGroup.platform.toLowerCase() === platform) : 
+                mockData.adGroups;
+
+            filteredAdGroups.forEach(adGroup => {
+                const card = document.createElement('div');
+                card.className = 'campaign-card';
+                card.innerHTML = `
+                    <div class="campaign-header">
+                        <div class="campaign-name">${adGroup.name}</div>
+                        <div class="campaign-status ${adGroup.status === 'ENABLED' ? 'status-enabled' : 'status-paused'}">
+                            ${adGroup.status}
+                        </div>
+                    </div>
+                    <div style="font-size: 14px; color: #666; margin-bottom: 8px;">
+                        <strong>Campaign:</strong> ${adGroup.campaign}<br>
+                        <strong>Platform:</strong> ${adGroup.platform}<br>
+                        <strong>Daily Budget:</strong> $${adGroup.dailyBudget}<br>
+                        <strong>Ads:</strong> ${adGroup.ads}<br>
+                        <strong>Keywords:</strong> ${adGroup.keywords}
+                    </div>
+                    <div class="campaign-metrics">
+                        <div class="metric">📊 ${adGroup.performance.impressions.toLocaleString()} impressions</div>
+                        <div class="metric">👆 ${adGroup.performance.clicks} clicks</div>
+                        <div class="metric">💰 $${adGroup.performance.spend.toFixed(2)} spend</div>
+                        <div class="metric">📈 ROAS: ${adGroup.performance.roas}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Render Product Ads
+        function renderProductAds(platform = null) {
+            const containerId = platform ? `${platform}-productads-list` : 'productads-list';
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            const filteredProductAds = platform ? 
+                mockData.productAds.filter(productAd => productAd.platform.toLowerCase() === platform) : 
+                mockData.productAds;
+
+            filteredProductAds.forEach(productAd => {
+                const card = document.createElement('div');
+                card.className = 'campaign-card';
+                card.innerHTML = `
+                    <div class="campaign-header">
+                        <div class="campaign-name">${productAd.name}</div>
+                        <div class="campaign-status ${productAd.status === 'ENABLED' ? 'status-enabled' : 'status-paused'}">
+                            ${productAd.status}
+                        </div>
+                    </div>
+                    <div style="font-size: 14px; color: #666; margin-bottom: 8px;">
+                        <strong>Campaign:</strong> ${productAd.campaign}<br>
+                        <strong>Platform:</strong> ${productAd.platform}<br>
+                        <strong>Type:</strong> ${productAd.type}<br>
+                        <strong>SKU:</strong> ${productAd.sku}<br>
+                        <strong>Price:</strong> $${productAd.price}
+                    </div>
+                    <div class="campaign-metrics">
+                        <div class="metric">📊 ${productAd.performance.impressions.toLocaleString()} impressions</div>
+                        <div class="metric">👆 ${productAd.performance.clicks} clicks</div>
+                        <div class="metric">💰 $${productAd.performance.spend.toFixed(2)} spend</div>
+                        <div class="metric">📈 ROAS: ${productAd.performance.roas}</div>
+                        <div class="metric">🛒 ${productAd.performance.conversions} conversions</div>
+                        <div class="metric">💵 $${productAd.performance.revenue.toFixed(2)} revenue</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Render Keywords
+        function renderKeywords(platform = null) {
+            const containerId = platform ? `${platform}-keywords-list` : 'keywords-list';
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            const filteredKeywords = platform ? 
+                mockData.keywords.filter(keyword => keyword.platform.toLowerCase() === platform) : 
+                mockData.keywords;
+
+            filteredKeywords.forEach(keyword => {
+                const card = document.createElement('div');
+                card.className = 'campaign-card';
+                card.innerHTML = `
+                    <div class="campaign-header">
+                        <div class="campaign-name">${keyword.keyword}</div>
+                        <div class="campaign-status ${keyword.status === 'ENABLED' ? 'status-enabled' : 'status-paused'}">
+                            ${keyword.status}
+                        </div>
+                    </div>
+                    <div style="font-size: 14px; color: #666; margin-bottom: 8px;">
+                        <strong>Campaign:</strong> ${keyword.campaign}<br>
+                        <strong>Platform:</strong> ${keyword.platform}<br>
+                        <strong>Match Type:</strong> ${keyword.matchType}<br>
+                        <strong>Bid:</strong> $${keyword.bid}
+                    </div>
+                    <div class="campaign-metrics">
+                        <div class="metric">📊 ${keyword.performance.impressions.toLocaleString()} impressions</div>
+                        <div class="metric">👆 ${keyword.performance.clicks} clicks</div>
+                        <div class="metric">💰 $${keyword.performance.spend.toFixed(2)} spend</div>
+                        <div class="metric">📈 ROAS: ${keyword.performance.roas}</div>
+                        <div class="metric">🎯 ${keyword.performance.conversions} conversions</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
         // Download functions
         function downloadCampaigns(platform) {
             const campaigns = platform === 'all' ? [...mockData.amazon, ...mockData.walmart] : 
@@ -404,6 +916,39 @@
             const allCampaigns = [...mockData.amazon, ...mockData.walmart];
             const csv = convertToCSV(allCampaigns, 'complete');
             downloadCSV(csv, `adsphere-complete-data-${new Date().toISOString().slice(0,10)}.csv`);
+        }
+
+        function downloadAdGroups(platform = null) {
+            const adGroups = platform ? 
+                mockData.adGroups.filter(adGroup => adGroup.platform.toLowerCase() === platform) : 
+                mockData.adGroups;
+            const csv = convertAdGroupsToCSV(adGroups);
+            const filename = platform ? 
+                `${platform}-adgroups-${new Date().toISOString().slice(0,10)}.csv` : 
+                `adgroups-${new Date().toISOString().slice(0,10)}.csv`;
+            downloadCSV(csv, filename);
+        }
+
+        function downloadProductAds(platform = null) {
+            const productAds = platform ? 
+                mockData.productAds.filter(productAd => productAd.platform.toLowerCase() === platform) : 
+                mockData.productAds;
+            const csv = convertProductAdsToCSV(productAds);
+            const filename = platform ? 
+                `${platform}-product-ads-${new Date().toISOString().slice(0,10)}.csv` : 
+                `product-ads-${new Date().toISOString().slice(0,10)}.csv`;
+            downloadCSV(csv, filename);
+        }
+
+        function downloadKeywords(platform = null) {
+            const keywords = platform ? 
+                mockData.keywords.filter(keyword => keyword.platform.toLowerCase() === platform) : 
+                mockData.keywords;
+            const csv = convertKeywordsToCSV(keywords);
+            const filename = platform ? 
+                `${platform}-keywords-${new Date().toISOString().slice(0,10)}.csv` : 
+                `keywords-${new Date().toISOString().slice(0,10)}.csv`;
+            downloadCSV(csv, filename);
         }
 
         function convertToCSV(campaigns, source) {
@@ -428,6 +973,71 @@
             return [headers, ...rows].map(row => row.join(',')).join('\n');
         }
 
+        function convertAdGroupsToCSV(adGroups) {
+            const headers = ['Ad Group ID', 'Ad Group Name', 'Campaign', 'Platform', 'Status', 'Daily Budget', 'Ads Count', 'Keywords Count', 'Impressions', 'Clicks', 'Spend', 'ROAS'];
+            
+            const rows = adGroups.map(ag => [
+                ag.adGroupId,
+                `"${ag.name}"`,
+                ag.campaign,
+                ag.platform,
+                ag.status,
+                ag.dailyBudget,
+                ag.ads,
+                ag.keywords,
+                ag.performance.impressions,
+                ag.performance.clicks,
+                ag.performance.spend.toFixed(2),
+                ag.performance.roas
+            ]);
+
+            return [headers, ...rows].map(row => row.join(',')).join('\n');
+        }
+
+        function convertProductAdsToCSV(productAds) {
+            const headers = ['Ad ID', 'Product Name', 'Campaign', 'Platform', 'Type', 'Status', 'SKU', 'Price', 'Impressions', 'Clicks', 'Spend', 'ROAS', 'Conversions', 'Revenue'];
+            
+            const rows = productAds.map(pa => [
+                pa.adId,
+                `"${pa.name}"`,
+                pa.campaign,
+                pa.platform,
+                pa.type,
+                pa.status,
+                pa.sku,
+                pa.price,
+                pa.performance.impressions,
+                pa.performance.clicks,
+                pa.performance.spend.toFixed(2),
+                pa.performance.roas,
+                pa.performance.conversions,
+                pa.performance.revenue.toFixed(2)
+            ]);
+
+            return [headers, ...rows].map(row => row.join(',')).join('\n');
+        }
+
+        function convertKeywordsToCSV(keywords) {
+            const headers = ['Keyword ID', 'Keyword', 'Campaign', 'Platform', 'Match Type', 'Bid', 'Status', 'Impressions', 'Clicks', 'Spend', 'ROAS', 'Conversions'];
+            
+            const rows = keywords.map(kw => [
+                kw.keywordId,
+                `"${kw.keyword}"`,
+                kw.campaign,
+                kw.platform,
+                kw.matchType,
+                kw.bid,
+                kw.status,
+                kw.performance.impressions,
+                kw.performance.clicks,
+                kw.performance.spend.toFixed(2),
+                kw.performance.roas,
+                kw.performance.conversions
+            ]);
+
+            return [headers, ...rows].map(row => row.join(',')).join('\n');
+        }
+
         function downloadCSV(csv, filename) {
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
@@ -438,6 +1048,111 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        // Render Charts
+        function renderCharts() {
+            renderPerformanceChart();
+            renderPlatformChart();
+        }
+
+        function renderPerformanceChart() {
+            const canvas = document.getElementById('performanceChart');
+            const ctx = canvas.getContext('2d');
+            
+            // Calculate performance data
+            const allCampaigns = [...mockData.amazon, ...mockData.walmart];
+            const performanceData = allCampaigns.map(campaign => ({
+                name: campaign.name,
+                impressions: campaign.metrics.impressions,
+                clicks: campaign.metrics.clicks,
+                spend: campaign.metrics.spend,
+                roas: campaign.metrics.roas
+            }));
+
+            // Simple bar chart
+            const maxValue = Math.max(...performanceData.map(d => d.impressions));
+            const barWidth = 60;
+            const barSpacing = 20;
+            const chartHeight = 150;
+            const chartWidth = performanceData.length * (barWidth + barSpacing);
+
+            // Clear canvas
+            canvas.width = chartWidth;
+            canvas.height = chartHeight + 40;
+
+            // Draw bars
+            performanceData.forEach((data, index) => {
+                const barHeight = (data.impressions / maxValue) * chartHeight;
+                const x = index * (barWidth + barSpacing) + barSpacing;
+                const y = chartHeight - barHeight;
+
+                // Draw bar
+                ctx.fillStyle = '#007AFF';
+                ctx.fillRect(x, y, barWidth, barHeight);
+
+                // Draw value on top
+                ctx.fillStyle = '#333';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(data.impressions.toLocaleString(), x + barWidth/2, y - 5);
+            });
+
+            // Draw axes
+            ctx.strokeStyle = '#ddd';
+            ctx.beginPath();
+            ctx.moveTo(0, chartHeight);
+            ctx.lineTo(chartWidth, chartHeight);
+            ctx.stroke();
+        }
+
+        function renderPlatformChart() {
+            const canvas = document.getElementById('platformChart');
+            const ctx = canvas.getContext('2d');
+            
+            // Calculate platform data
+            const amazonCount = mockData.amazon.length;
+            const walmartCount = mockData.walmart.length;
+            const total = amazonCount + walmartCount;
+
+            // Pie chart data
+            const data = [
+                { label: 'Amazon', value: amazonCount, color: '#FF9500' },
+                { label: 'Walmart', value: walmartCount, color: '#0071CE' }
+            ];
+
+            // Clear canvas
+            canvas.width = 400;
+            canvas.height = 200;
+
+            // Draw pie chart
+            const centerX = 200;
+            const centerY = 100;
+            const radius = 80;
+            let currentAngle = -Math.PI / 2;
+
+            data.forEach((segment) => {
+                const sliceAngle = (segment.value / total) * 2 * Math.PI;
+                
+                // Draw pie slice
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+                ctx.lineTo(centerX, centerY);
+                ctx.fillStyle = segment.color;
+                ctx.fill();
+
+                // Draw label
+                const labelAngle = currentAngle + sliceAngle / 2;
+                const labelX = centerX + Math.cos(labelAngle) * (radius * 0.7);
+                const labelY = centerY + Math.sin(labelAngle) * (radius * 0.7);
+                
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${segment.label} (${segment.value})`, labelX, labelY);
+                
+                currentAngle += sliceAngle;
+            });
         }
 
         // Initialize on load
