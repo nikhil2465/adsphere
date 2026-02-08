@@ -217,6 +217,116 @@
         .sub-tab-content.active {
             display: block;
         }
+        
+        /* Performance Metrics Header */
+        .metrics-header {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.0.1);
+            border-left: 4px solid #007aff;
+        }
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .metric-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+        }
+        .metric-change {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .metric-change.positive {
+            background: #d4edda;
+            color: #155724;
+        }
+        .metric-change.negative {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        .metric-period {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* Enhanced Chart Styles */
+        .chart-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .control-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .control-btn:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+        .control-btn.active {
+            background: #007aff;
+            color: white;
+            border-color: #007aff;
+        }
+        .date-range {
+            font-size: 12px;
+            color: #666;
+            margin-left: auto;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+        .legend-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -234,6 +344,76 @@
 
         <!-- Home Tab -->
         <div id="home" class="tab-content active">
+            <!-- Performance Metrics Header -->
+            <div class="metrics-header">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Ad Spend</span>
+                        <span class="metric-change negative">▼ 12.5%</span>
+                    </div>
+                    <div class="metric-value">$2,847.50</div>
+                    <div class="metric-period">Prev 7 days</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Ad Sales</span>
+                        <span class="metric-change positive">▲ 8.3%</span>
+                    </div>
+                    <div class="metric-value">$12,458.92</div>
+                    <div class="metric-period">Prev 7 days</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">Ad Units</span>
+                        <span class="metric-change positive">▲ 15.2%</span>
+                    </div>
+                    <div class="metric-value">1,247</div>
+                    <div class="metric-period">Prev 7 days</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-title">ROAS</span>
+                        <span class="metric-change positive">▲ 4.4%</span>
+                    </div>
+                    <div class="metric-value">4.37</div>
+                    <div class="metric-period">Prev 7 days</div>
+                </div>
+            </div>
+            
+            <!-- Performance Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📈 Performance Overview</h2>
+                    <div class="chart-controls">
+                        <button class="control-btn" onclick="toggleImpact()">Show Impact</button>
+                        <button class="control-btn" onclick="toggleChanges()">View Changes</button>
+                        <div class="date-range">Jan 29 - Feb 03 (Daily)</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performanceChart" width="800" height="300"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #8B5CF6;"></span>
+                        <span class="legend-label">Ad Spend</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #3B82F6;"></span>
+                        <span class="legend-label">Ad Sales</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #06B6D4;"></span>
+                        <span class="legend-label">Ad Units</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #F97316;"></span>
+                        <span class="legend-label">ROAS</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Original Summary Card (Preserved) -->
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title">📊 Summary</h2>
@@ -257,14 +437,6 @@
                         <div class="stat-label">Average ROAS</div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Performance Chart -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">📈 Performance Overview</h2>
-                </div>
-                <canvas id="performanceChart" width="400" height="200"></canvas>
             </div>
             
             <!-- Platform Distribution Chart -->
@@ -1060,50 +1232,139 @@
             const canvas = document.getElementById('performanceChart');
             const ctx = canvas.getContext('2d');
             
-            // Calculate performance data
-            const allCampaigns = [...mockData.amazon, ...mockData.walmart];
-            const performanceData = allCampaigns.map(campaign => ({
-                name: campaign.name,
-                impressions: campaign.metrics.impressions,
-                clicks: campaign.metrics.clicks,
-                spend: campaign.metrics.spend,
-                roas: campaign.metrics.roas
-            }));
-
-            // Simple bar chart
-            const maxValue = Math.max(...performanceData.map(d => d.impressions));
-            const barWidth = 60;
-            const barSpacing = 20;
-            const chartHeight = 150;
-            const chartWidth = performanceData.length * (barWidth + barSpacing);
-
+            // Generate time series data for the last 7 days
+            const dates = [];
+            const adSpendData = [];
+            const adSalesData = [];
+            const adUnitsData = [];
+            const roasData = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                dates.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                
+                // Generate realistic-looking data with some variation
+                adSpendData.push(2500 + Math.random() * 800 - 400);
+                adSalesData.push(12000 + Math.random() * 3000 - 1500);
+                adUnitsData.push(1200 + Math.random() * 200 - 100);
+                roasData.push(4.0 + Math.random() * 1.5 - 0.75);
+            }
+            
             // Clear canvas
-            canvas.width = chartWidth;
-            canvas.height = chartHeight + 40;
-
-            // Draw bars
-            performanceData.forEach((data, index) => {
-                const barHeight = (data.impressions / maxValue) * chartHeight;
-                const x = index * (barWidth + barSpacing) + barSpacing;
-                const y = chartHeight - barHeight;
-
-                // Draw bar
-                ctx.fillStyle = '#007AFF';
-                ctx.fillRect(x, y, barWidth, barHeight);
-
-                // Draw value on top
-                ctx.fillStyle = '#333';
-                ctx.font = '10px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(data.impressions.toLocaleString(), x + barWidth/2, y - 5);
-            });
-
+            canvas.width = 800;
+            canvas.height = 300;
+            
+            // Chart dimensions
+            const padding = 40;
+            const chartWidth = canvas.width - padding * 2;
+            const chartHeight = canvas.height - padding * 2;
+            
+            // Find data ranges
+            const maxSpend = Math.max(...adSpendData);
+            const maxSales = Math.max(...adSalesData);
+            const maxUnits = Math.max(...adUnitsData);
+            const maxRoas = Math.max(...roasData);
+            
+            // Draw grid lines
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (chartHeight / 5) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(canvas.width - padding, y);
+                ctx.stroke();
+            }
+            
             // Draw axes
             ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(0, chartHeight);
-            ctx.lineTo(chartWidth, chartHeight);
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, canvas.height - padding);
+            ctx.lineTo(canvas.width - padding, canvas.height - padding);
             ctx.stroke();
+            
+            // Draw data lines
+            const drawLine = (data, color, maxValue) => {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                data.forEach((value, index) => {
+                    const x = padding + (chartWidth / (data.length - 1)) * index;
+                    const y = canvas.height - padding - (value / maxValue) * chartHeight;
+                    
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                
+                ctx.stroke();
+                
+                // Draw points
+                ctx.fillStyle = color;
+                data.forEach((value, index) => {
+                    const x = padding + (chartWidth / (data.length - 1)) * index;
+                    const y = canvas.height - padding - (value / maxValue) * chartHeight;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                    ctx.fill();
+                });
+            };
+            
+            // Draw lines with colors from the design
+            drawLine(adSpendData, '#8B5CF6', maxSpend);  // Blue
+            drawLine(adSalesData, '#3B82F6', maxSales);    // Dark Blue
+            drawLine(adUnitsData, '#06B6D4', maxUnits);   // Light Blue
+            drawLine(roasData, '#F97316', maxRoas);      // Orange
+            
+            // Draw date labels
+            ctx.fillStyle = '#666';
+            ctx.font = '11px Arial';
+            ctx.textAlign = 'center';
+            dates.forEach((date, index) => {
+                const x = padding + (chartWidth / (dates.length - 1)) * index;
+                ctx.fillText(date, x, canvas.height - padding + 20);
+            });
+            
+            // Draw Y-axis labels (left side for spend/sales)
+            ctx.fillStyle = '#666';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const value = (maxSales / 5) * (5 - i);
+                const y = padding + (chartHeight / 5) * i;
+                ctx.fillText('$' + value.toFixed(0), padding - 10, y + 3);
+            }
+            
+            // Draw Y-axis labels (right side for units/roas)
+            ctx.textAlign = 'left';
+            for (let i = 0; i <= 5; i++) {
+                const value = (maxRoas / 5) * (5 - i);
+                const y = padding + (chartHeight / 5) * i;
+                ctx.fillText(value.toFixed(1), canvas.width - padding + 10, y + 3);
+            }
+        }
+
+        // Graph control functions
+        let showImpact = false;
+        let showChanges = false;
+
+        function toggleImpact() {
+            showImpact = !showImpact;
+            event.target.classList.toggle('active');
+            renderPerformanceChart(); // Re-render with new settings
+        }
+
+        function toggleChanges() {
+            showChanges = !showChanges;
+            event.target.classList.toggle('active');
+            renderPerformanceChart(); // Re-render with new settings
         }
 
         function renderPlatformChart() {
