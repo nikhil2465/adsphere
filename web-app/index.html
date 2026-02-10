@@ -349,33 +349,33 @@
                 <div class="metric-card">
                     <div class="metric-header">
                         <span class="metric-title">Ad Spend</span>
-                        <span class="metric-change negative">▼ 12.5%</span>
+                        <span class="metric-change negative">▼ 8.2%</span>
                     </div>
-                    <div class="metric-value">$2,847.50</div>
+                    <div class="metric-value" id="header-ad-spend">$0</div>
                     <div class="metric-period">Prev 7 days</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-header">
                         <span class="metric-title">Ad Sales</span>
-                        <span class="metric-change positive">▲ 8.3%</span>
+                        <span class="metric-change positive">▲ 12.7%</span>
                     </div>
-                    <div class="metric-value">$12,458.92</div>
+                    <div class="metric-value" id="header-ad-sales">$0</div>
                     <div class="metric-period">Prev 7 days</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-header">
                         <span class="metric-title">Ad Units</span>
-                        <span class="metric-change positive">▲ 15.2%</span>
+                        <span class="metric-change positive">▲ 18.4%</span>
                     </div>
-                    <div class="metric-value">1,247</div>
+                    <div class="metric-value" id="header-ad-units">0</div>
                     <div class="metric-period">Prev 7 days</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-header">
                         <span class="metric-title">ROAS</span>
-                        <span class="metric-change positive">▲ 4.4%</span>
+                        <span class="metric-change positive">▲ 6.1%</span>
                     </div>
-                    <div class="metric-value">4.37</div>
+                    <div class="metric-value" id="header-roas">0</div>
                     <div class="metric-period">Prev 7 days</div>
                 </div>
             </div>
@@ -577,231 +577,379 @@
         const mockData = {
             amazon: [
                 {
-                    campaignId: "AMZ001",
-                    name: "Summer Sale 2024",
-                    type: "Sponsored Products",
+                    campaignId: "AMZ-CAMP-2001",
+                    name: "Amazon Campaign 1",
+                    type: "SPONSORED_DISPLAY",
                     status: "ENABLED",
-                    dailyBudget: 50,
-                    startDate: "2024-06-01",
-                    endDate: "2024-08-31",
+                    dailyBudget: 820,
+                    startDate: "2026-02-01",
+                    endDate: "2026-03-01",
                     metrics: {
-                        impressions: 125000,
-                        clicks: 2500,
-                        spend: 1250.50,
-                        roas: 4.2
+                        impressions: 154703,
+                        clicks: 1122,
+                        spend: 1398.77,
+                        sales: 5758.19,
+                        orders: 302,
+                        acos: 35.23,
+                        roas: 4.61
                     }
                 },
                 {
-                    campaignId: "AMZ002", 
-                    name: "Prime Day Special",
-                    type: "Sponsored Brands",
-                    status: "PAUSED",
-                    dailyBudget: 100,
-                    startDate: "2024-07-15",
-                    endDate: "2024-07-17",
+                    campaignId: "AMZ-CAMP-2002",
+                    name: "Amazon Campaign 2",
+                    type: "SPONSORED_BRANDS",
+                    status: "ENABLED",
+                    dailyBudget: 758,
+                    startDate: "2026-02-01",
+                    endDate: "2026-03-01",
                     metrics: {
-                        impressions: 89000,
-                        clicks: 1780,
-                        spend: 890.25,
-                        roas: 3.8
+                        impressions: 186675,
+                        clicks: 1883,
+                        spend: 1609.12,
+                        sales: 1551.94,
+                        orders: 164,
+                        acos: 36.83,
+                        roas: 4.57
+                    }
+                },
+                {
+                    campaignId: "AMZ-CAMP-2003",
+                    name: "Amazon Campaign 3",
+                    type: "SPONSORED_PRODUCTS",
+                    status: "ENABLED",
+                    dailyBudget: 869,
+                    startDate: "2026-02-01",
+                    endDate: "2026-03-01",
+                    metrics: {
+                        impressions: 228440,
+                        clicks: 2176,
+                        spend: 169.74,
+                        sales: 5823.77,
+                        orders: 167,
+                        acos: 34.29,
+                        roas: 5.66
+                    }
+                },
+                {
+                    campaignId: "AMZ-CAMP-2004",
+                    name: "Amazon Campaign 4",
+                    type: "SPONSORED_DISPLAY",
+                    status: "ENABLED",
+                    dailyBudget: 345,
+                    startDate: "2026-02-01",
+                    endDate: "2026-03-01",
+                    metrics: {
+                        impressions: 197932,
+                        clicks: 3210,
+                        spend: 1778.53,
+                        sales: 7368.21,
+                        orders: 111,
+                        acos: 38.29,
+                        roas: 2.73
+                    }
+                },
+                {
+                    campaignId: "AMZ-CAMP-2005",
+                    name: "Amazon Campaign 5",
+                    type: "SPONSORED_PRODUCTS",
+                    status: "ENABLED",
+                    dailyBudget: 595,
+                    startDate: "2026-02-01",
+                    endDate: "2026-03-01",
+                    metrics: {
+                        impressions: 66284,
+                        clicks: 639,
+                        spend: 503.94,
+                        sales: 4691.08,
+                        orders: 278,
+                        acos: 14.52,
+                        roas: 4.86
                     }
                 }
             ],
             walmart: [
                 {
-                    campaignId: "WMT001",
-                    name: "Back to School 2024",
-                    type: "Sponsored Products",
+                    campaignId: "WM-CAMP-1001",
+                    name: "Campaign 1",
+                    type: "SPONSORED_PRODUCTS",
                     status: "ACTIVE",
-                    dailyBudget: 75,
-                    startDate: "2024-07-01",
-                    endDate: "2024-09-30",
+                    dailyBudget: 180,
+                    startDate: "2026-02-01",
+                    endDate: "2026-03-01",
                     metrics: {
-                        impressions: 98000,
-                        clicks: 1960,
-                        spend: 1470.75,
-                        roas: 3.5
+                        impressions: 111077,
+                        clicks: 4893,
+                        spend: 1048.07,
+                        conversions: 128,
+                        roas: 3.02
                     }
                 },
                 {
-                    campaignId: "WMT002",
-                    name: "Holiday Essentials",
-                    type: "Sponsored Brands", 
+                    campaignId: "WM-CAMP-1002",
+                    name: "Campaign 2",
+                    type: "SPONSORED_BRANDS",
                     status: "ACTIVE",
-                    dailyBudget: 120,
-                    startDate: "2024-11-01",
-                    endDate: "2024-12-31",
+                    dailyBudget: 411,
+                    startDate: "2026-02-01",
+                    endDate: "2026-03-01",
                     metrics: {
-                        impressions: 156000,
-                        clicks: 3120,
-                        spend: 2340.80,
-                        roas: 4.1
+                        impressions: 96871,
+                        clicks: 4160,
+                        spend: 288.37,
+                        conversions: 247,
+                        roas: 3.11
+                    }
+                },
+                {
+                    campaignId: "WM-CAMP-1003",
+                    name: "Campaign 3",
+                    type: "SPONSORED_BRANDS",
+                    status: "ACTIVE",
+                    dailyBudget: 219,
+                    startDate: "2026-02-01",
+                    endDate: "2026-03-01",
+                    metrics: {
+                        impressions: 161193,
+                        clicks: 2717,
+                        spend: 1236.9,
+                        conversions: 232,
+                        roas: 3.27
+                    }
+                },
+                {
+                    campaignId: "WM-CAMP-1004",
+                    name: "Campaign 4",
+                    type: "SPONSORED_BRANDS",
+                    status: "ACTIVE",
+                    dailyBudget: 759,
+                    startDate: "2026-02-01",
+                    endDate: "2026-03-01",
+                    metrics: {
+                        impressions: 194983,
+                        clicks: 588,
+                        spend: 1430.8,
+                        conversions: 277,
+                        roas: 3.83
+                    }
+                },
+                {
+                    campaignId: "WM-CAMP-1005",
+                    name: "Campaign 5",
+                    type: "DISPLAY",
+                    status: "ACTIVE",
+                    dailyBudget: 579,
+                    startDate: "2026-02-01",
+                    endDate: "2026-03-01",
+                    metrics: {
+                        impressions: 187214,
+                        clicks: 3389,
+                        spend: 1276.99,
+                        conversions: 294,
+                        roas: 4.34
                     }
                 }
             ],
             adGroups: [
+                // Amazon Ad Groups
                 {
-                    adGroupId: "AG001",
-                    name: "Electronics Category",
-                    campaign: "Summer Sale 2024",
+                    adGroupId: "AMZ-AG-11",
+                    name: "AdGroup 1",
+                    campaign: "Amazon Campaign 1",
                     platform: "Amazon",
                     status: "ENABLED",
-                    dailyBudget: 25,
-                    ads: 12,
-                    keywords: 45,
+                    dailyBudget: 820,
+                    ads: 5,
+                    keywords: 5,
                     performance: {
-                        impressions: 62000,
-                        clicks: 1240,
-                        spend: 625.25,
-                        roas: 4.8
+                        impressions: 21159,
+                        clicks: 402,
+                        spend: 281.92,
+                        roas: 3.83
                     }
                 },
                 {
-                    adGroupId: "AG002",
-                    name: "Home & Kitchen",
-                    campaign: "Prime Day Special",
+                    adGroupId: "AMZ-AG-12",
+                    name: "AdGroup 2",
+                    campaign: "Amazon Campaign 1",
                     platform: "Amazon",
-                    status: "PAUSED",
-                    dailyBudget: 50,
-                    ads: 8,
-                    keywords: 32,
+                    status: "ENABLED",
+                    dailyBudget: 820,
+                    ads: 5,
+                    keywords: 5,
                     performance: {
-                        impressions: 44500,
-                        clicks: 890,
-                        spend: 445.12,
-                        roas: 3.6
+                        impressions: 15467,
+                        clicks: 101,
+                        spend: 91.43,
+                        roas: 1.20
                     }
                 },
                 {
-                    adGroupId: "AG003",
-                    name: "School Supplies",
-                    campaign: "Back to School 2024",
+                    adGroupId: "AMZ-AG-21",
+                    name: "AdGroup 1",
+                    campaign: "Amazon Campaign 2",
+                    platform: "Amazon",
+                    status: "ENABLED",
+                    dailyBudget: 758,
+                    ads: 5,
+                    keywords: 5,
+                    performance: {
+                        impressions: 19552,
+                        clicks: 117,
+                        spend: 37.79,
+                        roas: 26.53
+                    }
+                },
+                // Walmart Ad Groups
+                {
+                    adGroupId: "WM-AG-11",
+                    name: "AdGroup 1",
+                    campaign: "Campaign 1",
                     platform: "Walmart",
-                    status: "ENABLED",
-                    dailyBudget: 35,
-                    ads: 15,
-                    keywords: 28,
+                    status: "ACTIVE",
+                    dailyBudget: 180,
+                    ads: 5,
+                    keywords: 5,
                     performance: {
-                        impressions: 49000,
-                        clicks: 980,
-                        spend: 735.37,
-                        roas: 3.7
+                        impressions: 8088,
+                        clicks: 312,
+                        spend: 193.45,
+                        roas: 1.98
+                    }
+                },
+                {
+                    adGroupId: "WM-AG-12",
+                    name: "AdGroup 2",
+                    campaign: "Campaign 1",
+                    platform: "Walmart",
+                    status: "ACTIVE",
+                    dailyBudget: 180,
+                    ads: 5,
+                    keywords: 5,
+                    performance: {
+                        impressions: 10193,
+                        clicks: 142,
+                        spend: 43.35,
+                        roas: 8.26
                     }
                 }
             ],
             productAds: [
+                // Amazon Product Ads
                 {
-                    adId: "PA001",
-                    name: "Wireless Headphones Pro",
-                    campaign: "Summer Sale 2024",
+                    adId: "AMZ-PA-1",
+                    name: "Amazon Product Ad 1",
+                    campaign: "Amazon Campaign 1",
                     platform: "Amazon",
-                    type: "Sponsored Product",
+                    type: "SPONSORED_PRODUCT",
                     status: "ENABLED",
-                    sku: "WH-P100-BLK",
-                    price: 89.99,
+                    sku: "AMZ-SKU-001",
+                    price: 29.99,
                     performance: {
-                        impressions: 31000,
-                        clicks: 620,
-                        spend: 312.50,
-                        roas: 5.2,
-                        conversions: 18,
-                        revenue: 1625.82
+                        impressions: 21159,
+                        clicks: 402,
+                        spend: 281.92,
+                        roas: 3.83,
+                        conversions: 15,
+                        revenue: 1079.70
                     }
                 },
                 {
-                    adId: "PA002",
-                    name: "Smart Watch Series 5",
-                    campaign: "Prime Day Special",
+                    adId: "AMZ-PA-2",
+                    name: "Amazon Product Ad 2",
+                    campaign: "Amazon Campaign 2",
                     platform: "Amazon",
-                    type: "Sponsored Product",
-                    status: "PAUSED",
-                    sku: "SW-S5-SLV",
-                    price: 299.99,
+                    type: "SPONSORED_PRODUCT",
+                    status: "ENABLED",
+                    sku: "AMZ-SKU-002",
+                    price: 49.99,
                     performance: {
-                        impressions: 22000,
-                        clicks: 440,
-                        spend: 220.00,
-                        roas: 4.0,
-                        conversions: 8,
-                        revenue: 879.96
+                        impressions: 19552,
+                        clicks: 117,
+                        spend: 37.79,
+                        roas: 26.53,
+                        conversions: 20,
+                        revenue: 1002.50
                     }
                 },
+                // Walmart Product Ads
                 {
-                    adId: "PA003",
-                    name: "Laptop Backpack Premium",
-                    campaign: "Back to School 2024",
+                    adId: "WM-PA-1",
+                    name: "Walmart Product Ad 1",
+                    campaign: "Campaign 1",
                     platform: "Walmart",
-                    type: "Sponsored Product",
-                    status: "ENABLED",
-                    sku: "LB-PREM-BLK",
-                    price: 45.99,
+                    type: "SPONSORED_PRODUCT",
+                    status: "ACTIVE",
+                    sku: "WM-SKU-001",
+                    price: 19.99,
                     performance: {
-                        impressions: 28000,
-                        clicks: 560,
-                        spend: 420.00,
-                        roas: 3.8,
-                        conversions: 14,
-                        revenue: 643.86
+                        impressions: 8088,
+                        clicks: 312,
+                        spend: 193.45,
+                        roas: 1.98,
+                        conversions: 8,
+                        revenue: 383.16
                     }
                 }
             ],
             keywords: [
+                // Amazon Keywords
                 {
-                    keywordId: "KW001",
-                    keyword: "wireless headphones",
-                    campaign: "Summer Sale 2024",
+                    keywordId: "AMZ-KW-111",
+                    keyword: "amazon keyword 1",
+                    campaign: "Amazon Campaign 1",
                     platform: "Amazon",
-                    matchType: "Broad",
-                    bid: 1.25,
+                    matchType: "PHRASE",
+                    bid: 1.09,
                     status: "ENABLED",
                     performance: {
-                        impressions: 15500,
-                        clicks: 310,
-                        spend: 387.50,
-                        roas: 4.1,
-                        conversions: 9
+                        impressions: 21159,
+                        clicks: 402,
+                        spend: 281.92,
+                        roas: 0.38,
+                        conversions: 3
                     }
                 },
                 {
-                    keywordId: "KW002",
-                    keyword: "bluetooth speaker",
-                    campaign: "Summer Sale 2024",
+                    keywordId: "AMZ-KW-112",
+                    keyword: "amazon keyword 2",
+                    campaign: "Amazon Campaign 1",
                     platform: "Amazon",
-                    matchType: "Phrase",
-                    bid: 0.85,
+                    matchType: "PHRASE",
+                    bid: 1.37,
                     status: "ENABLED",
                     performance: {
-                        impressions: 12000,
-                        clicks: 240,
-                        spend: 204.00,
-                        roas: 3.9,
-                        conversions: 7
+                        impressions: 2177,
+                        clicks: 375,
+                        spend: 92.17,
+                        roas: 5.78,
+                        conversions: 2
+                    }
+                },
+                // Walmart Keywords
+                {
+                    keywordId: "WM-KW-111",
+                    keyword: "sample keyword 1",
+                    campaign: "Campaign 1",
+                    platform: "Walmart",
+                    matchType: "PHRASE",
+                    bid: 0.92,
+                    status: "ENABLED",
+                    performance: {
+                        impressions: 8088,
+                        clicks: 312,
+                        spend: 193.45,
+                        roas: 0.62,
+                        conversions: 3
                     }
                 },
                 {
-                    keywordId: "KW003",
-                    keyword: "school supplies",
-                    campaign: "Back to School 2024",
+                    keywordId: "WM-KW-112",
+                    keyword: "sample keyword 2",
+                    campaign: "Campaign 1",
                     platform: "Walmart",
-                    matchType: "Exact",
-                    bid: 0.95,
+                    matchType: "PHRASE",
+                    bid: 0.37,
                     status: "ENABLED",
-                    performance: {
-                        impressions: 18500,
-                        clicks: 370,
-                        spend: 175.75,
-                        roas: 4.2,
-                        conversions: 11
-                    }
-                },
-                {
-                    keywordId: "KW004",
-                    keyword: "laptop accessories",
-                    campaign: "Back to School 2024",
-                    platform: "Walmart",
-                    matchType: "Broad",
-                    bid: 1.10,
-                    status: "PAUSED",
                     performance: {
                         impressions: 8900,
                         clicks: 178,
@@ -920,12 +1068,21 @@
             const totalCampaigns = allCampaigns.length;
             const totalImpressions = allCampaigns.reduce((sum, c) => sum + c.metrics.impressions, 0);
             const totalSpend = allCampaigns.reduce((sum, c) => sum + c.metrics.spend, 0);
-            const avgRoas = (allCampaigns.reduce((sum, c) => sum + c.metrics.roas, 0) / totalCampaigns).toFixed(1);
+            const totalSales = allCampaigns.reduce((sum, c) => sum + (c.metrics.sales || 0), 0);
+            const totalUnits = allCampaigns.reduce((sum, c) => sum + (c.metrics.orders || c.metrics.conversions || 0), 0);
+            const avgRoas = (allCampaigns.reduce((sum, c) => sum + c.metrics.roas, 0) / totalCampaigns).toFixed(2);
 
+            // Update original summary stats
             document.getElementById('total-campaigns').textContent = totalCampaigns;
             document.getElementById('total-impressions').textContent = totalImpressions.toLocaleString();
             document.getElementById('total-spend').textContent = `$${totalSpend.toFixed(2)}`;
             document.getElementById('total-roas').textContent = avgRoas;
+
+            // Update metrics header with real data
+            document.getElementById('header-ad-spend').textContent = `$${totalSpend.toFixed(2)}`;
+            document.getElementById('header-ad-sales').textContent = `$${totalSales.toFixed(2)}`;
+            document.getElementById('header-ad-units').textContent = totalUnits.toLocaleString();
+            document.getElementById('header-roas').textContent = avgRoas;
         }
 
         // Render campaigns
@@ -1232,23 +1389,32 @@
             const canvas = document.getElementById('performanceChart');
             const ctx = canvas.getContext('2d');
             
-            // Generate time series data for the last 7 days
+            // Calculate real data from mock data
+            const allCampaigns = [...mockData.amazon, ...mockData.walmart];
             const dates = [];
             const adSpendData = [];
             const adSalesData = [];
             const adUnitsData = [];
             const roasData = [];
             
+            // Generate 7-day trend data based on real campaign metrics
             for (let i = 6; i >= 0; i--) {
                 const date = new Date();
                 date.setDate(date.getDate() - i);
                 dates.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
                 
-                // Generate realistic-looking data with some variation
-                adSpendData.push(2500 + Math.random() * 800 - 400);
-                adSalesData.push(12000 + Math.random() * 3000 - 1500);
-                adUnitsData.push(1200 + Math.random() * 200 - 100);
-                roasData.push(4.0 + Math.random() * 1.5 - 0.75);
+                // Calculate daily values from campaign data with realistic variation
+                const dailyFactor = 0.8 + Math.random() * 0.4; // 80-120% variation
+                
+                const totalSpend = allCampaigns.reduce((sum, c) => sum + c.metrics.spend, 0);
+                const totalSales = allCampaigns.reduce((sum, c) => sum + (c.metrics.sales || 0), 0);
+                const totalUnits = allCampaigns.reduce((sum, c) => sum + (c.metrics.orders || c.metrics.conversions || 0), 0);
+                const avgRoas = allCampaigns.reduce((sum, c) => sum + c.metrics.roas, 0) / allCampaigns.length;
+                
+                adSpendData.push((totalSpend / 7) * dailyFactor);
+                adSalesData.push((totalSales / 7) * dailyFactor);
+                adUnitsData.push((totalUnits / 7) * dailyFactor);
+                roasData.push(avgRoas * (0.9 + Math.random() * 0.2)); // Small variation
             }
             
             // Clear canvas
