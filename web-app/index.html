@@ -1745,6 +1745,16 @@
                     return;
                 }
 
+                // Check if OTP already sent recently (prevent spam)
+                if (this.pendingOTP && this.pendingOTP.email === email) {
+                    const timeSinceLastOTP = Date.now() - this.pendingOTP.timestamp;
+                    if (timeSinceLastOTP < 60000) { // 1 minute cooldown
+                        const remainingTime = Math.ceil((60000 - timeSinceLastOTP) / 1000);
+                        this.showMessage(`Please wait ${remainingTime} seconds before requesting another OTP`, 'error');
+                        return;
+                    }
+                }
+
                 // Show loading state
                 const sendBtn = document.getElementById('sendOtpBtn');
                 const originalText = sendBtn.textContent;
@@ -1752,25 +1762,32 @@
                 sendBtn.disabled = true;
 
                 try {
-                    console.log('Sending OTP to:', email);
+                    console.log('=== SENDING SINGLE OTP ===');
+                    console.log('Email:', email);
                     
-                    // Generate local OTP immediately for testing
-                    const localOTP = this.generateOTP();
-                    console.log('Local OTP generated:', localOTP);
+                    // Generate ONLY ONE OTP
+                    const singleOTP = this.generateOTP();
+                    console.log('SINGLE OTP GENERATED:', singleOTP);
                     
+                    // Store the single OTP
                     this.pendingOTP = {
                         email: email,
-                        code: localOTP,
+                        code: singleOTP,
                         timestamp: Date.now()
                     };
                     
-                    // Show OTP immediately
-                    this.showMessage(`OTP sent to ${email}. Your OTP is: ${localOTP}`, 'success');
+                    console.log('OTP STORED:', this.pendingOTP);
+
+                    // Show the single OTP immediately
+                    const successMessage = `OTP sent to ${email}. Your OTP is: ${singleOTP}`;
+                    console.log('SHOWING SUCCESS MESSAGE:', successMessage);
+                    this.showMessage(successMessage, 'success');
                     this.showOTPForm();
 
-                    // Try backend API in background (non-blocking)
-                    this.tryBackendOTP(email, user.name).catch(error => {
-                        console.log('Backend OTP failed, using local OTP:', error);
+                    // Try to send via backend (but don't generate new OTP)
+                    console.log('Attempting to send same OTP via backend...');
+                    this.sendSameOTPToBackend(email, user.name, singleOTP).catch(error => {
+                        console.log('Backend sending failed, using local OTP only:', error);
                     });
 
                 } catch (error) {
@@ -1780,6 +1797,36 @@
                     // Reset button state
                     sendBtn.textContent = originalText;
                     sendBtn.disabled = false;
+                }
+            }
+
+            // New method to send the SAME OTP to backend (not generate new one)
+            async sendSameOTPToBackend(email, userName, otpCode) {
+                try {
+                    console.log('Sending existing OTP to backend:', otpCode);
+                    
+                    const response = await fetch('http://localhost:8003/api/otp/send', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            userName: userName,
+                            predefinedOTP: otpCode // Send the same OTP
+                        })
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log('Backend response for existing OTP:', result);
+                        
+                        if (result.success) {
+                            console.log('OTP also sent via backend successfully');
+                        }
+                    }
+                } catch (error) {
+                    console.log('Backend OTP sending failed:', error.message);
                 }
             }
 
@@ -1831,32 +1878,31 @@
                     localStorage.setItem('adsphere_users', JSON.stringify(this.users));
                     console.log('User created and saved:', newUser);
 
-                    // Generate local OTP immediately
-                    const localOTP = this.generateOTP();
-                    console.log('LOCAL OTP GENERATED:', localOTP);
+                    // Generate ONLY ONE OTP for registration
+                    console.log('=== GENERATING SINGLE REGISTRATION OTP ===');
+                    const singleOTP = this.generateOTP();
+                    console.log('SINGLE REGISTRATION OTP:', singleOTP);
                     
-                    // Store OTP
+                    // Store the single OTP
                     this.pendingOTP = {
                         email: email,
-                        code: localOTP,
+                        code: singleOTP,
                         timestamp: Date.now()
                     };
 
-                    console.log('PENDING OTP SET:', this.pendingOTP);
+                    console.log('REGISTRATION OTP STORED:', this.pendingOTP);
 
-                    // Show OTP immediately
-                    const successMessage = `Account created! Your OTP is: ${localOTP}`;
-                    console.log('SHOWING SUCCESS MESSAGE:', successMessage);
+                    // Show the single OTP immediately
+                    const successMessage = `Account created! Your OTP is: ${singleOTP}`;
+                    console.log('SHOWING REGISTRATION SUCCESS MESSAGE:', successMessage);
                     this.showMessage(successMessage, 'success');
-                    
-                    // Switch to OTP form
-                    console.log('SWITCHING TO OTP FORM');
                     this.showOTPForm();
 
-                    // Try backend in background (don't wait for it)
-                    setTimeout(() => {
-                        this.tryBackendOTP(email, name);
-                    }, 1000);
+                    // Try to send the same OTP via backend (don't generate new one)
+                    console.log('Attempting to send same registration OTP via backend...');
+                    this.sendSameOTPToBackend(email, name, singleOTP).catch(error => {
+                        console.log('Backend registration OTP sending failed, using local OTP only:', error);
+                    });
 
                 } catch (error) {
                     console.error('REGISTER ERROR:', error);

@@ -80,7 +80,7 @@ app.get('/health', (req, res) => {
 // Send OTP endpoint
 app.post('/api/otp/send', (req, res) => {
     try {
-        const { email, userName } = req.body;
+        const { email, userName, predefinedOTP } = req.body;
 
         if (!email || !userName) {
             return res.status(400).json({
@@ -98,16 +98,25 @@ app.post('/api/otp/send', (req, res) => {
             });
         }
 
-        // Generate and store OTP
-        const otp = otpService.storeOTP(email, otpService.generateOTP());
+        // Use predefined OTP if provided, otherwise generate new one
+        let otp;
+        if (predefinedOTP) {
+            otp = predefinedOTP;
+            console.log(`Using predefined OTP for ${email}: ${otp}`);
+        } else {
+            otp = otpService.generateOTP();
+            console.log(`Generated new OTP for ${email}: ${otp}`);
+        }
         
-        console.log(`OTP for ${email}: ${otp}`);
+        // Store the OTP
+        otpService.storeOTP(email, otp);
+        
+        console.log(`OTP for ${email}: ${otp}, expires at: ${otpService.otpStore.get(email).expiry}`);
         
         res.json({
             success: true,
             message: 'OTP sent successfully',
             email: email,
-            // For development - show OTP in response
             otp: process.env.NODE_ENV === 'development' ? otp : undefined
         });
 
