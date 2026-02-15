@@ -378,6 +378,9 @@ app.get('/api/data/targeting/:platform/:campaignId', (req, res) => {
   }
 });
 
+// OTP Authentication endpoints
+app.use('/api/otp', require('./routes/otp'));
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({
